@@ -1,86 +1,74 @@
 package org.generation.blogPessoal.controller;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import org.generation.blogPessoal.model.Usuario;
-
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.TestMethodOrder;
-
+import org.generation.blogPessoal.repository.UsuarioRepository;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+public class UsuarioControllerTest {
 
-class UsuarioControladorTest {
+    @Autowired
+    private TestRestTemplate testRestTemplate;
 
-	@Autowired
-	private TestRestTemplate testRestTemplate;
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
-	private Usuario usuario;
-	private Usuario usuarioAlterar;
+    private Usuario usuario;
+    private Usuario usuarioUpdate;
+    private Usuario usuarioAdmin;
 
-	@BeforeAll
-	public void start() {
-		usuario = new Usuario("RafaelBoaz", "134652");
-		usuarioAlterar = new Usuario("RafaelBoaz", "654321");
-	}
+    @BeforeEach
+    public void start() {
 
-	@Test
-	@Order(1)
-	@DisplayName("✔ Cadastrar Usuário!")
-	void deveSalvarUsuarioRetornaStatus201() {
+        usuarioAdmin = new Usuario("Jose Langue", "joseteste", "jose.langue@email.com", "123654987");
 
-		/*
-		 * Criando um objeto do tipo HttpEntity para enviar como terceiro parâmentro do
-		 * método exchange. (Enviando um objeto usuario via body)
-		 * 
-		 */
-		HttpEntity<Usuario> request = new HttpEntity<Usuario>(usuario);
+        usuarioUpdate = new Usuario(2L, "Fagner Antunes", "fag.ner", "fagner.a@email.com", "123654987");
 
-		ResponseEntity<Usuario> resposta = testRestTemplate.exchange("usuario/salvar", HttpMethod.POST, request,
-				Usuario.class);
-		assertEquals(HttpStatus.CREATED, resposta.getStatusCode());
-	}
+    }
 
-	@Test
-	@Order(2)
-	@DisplayName("👍 Listar todos os Usuários!")
-	void deveRetornarListadeUsuarioRetornaStatus200() {
-		ResponseEntity<String> resposta = testRestTemplate.withBasicAuth("RafaelBoaz", "134652")
-				.exchange("usuario/todos", HttpMethod.GET, null, String.class);
-		assertEquals(HttpStatus.OK, resposta.getStatusCode());
-	}
+    @Test
+    @DisplayName("Cadastrar Usuário!")
+    @Order(1)
+    public void deveRealizarPostUsuario() {
 
-	@Test
-	@Order(3)
-	@DisplayName("😳 Alterar Usuário!")
-	void deveAtualizarSenhaUsuarioRetornaStatus201() {
+        HttpEntity<Usuario> request = new HttpEntity<Usuario>(usuarioAdmin);
+        ResponseEntity<Usuario> resposta = testRestTemplate.exchange("/usuarios/cadastrar", HttpMethod.POST, request, Usuario.class);
+        assertEquals(HttpStatus.CREATED, resposta.getStatusCode());
 
-		/*
-		 * Criando um objeto do tipo HttpEntity para enviar como terceiro parâmentro do
-		 * método exchange. (Enviando um objeto usuario via body)
-		 * 
-		 */
-		HttpEntity<Usuario> request = new HttpEntity<Usuario>(usuarioAlterar);
+    }
 
-		ResponseEntity<Usuario> resposta = testRestTemplate.withBasicAuth("RafaelBoaz", "134652")
-				.exchange("usuario/alterar", HttpMethod.PUT, request, Usuario.class);
-		assertEquals(HttpStatus.CREATED, resposta.getStatusCode());
-	}
+    @Disabled
+    @Test
+    @DisplayName("Listar todos os  Usuário!")
+    @Order(2)
+    public void deveRealizarGetAllUsuario() {
+
+        ResponseEntity<String> resposta = testRestTemplate.withBasicAuth("admin@mail.com", "123654987").exchange("/usuarios/all", HttpMethod.GET, null, String.class);
+        assertEquals(HttpStatus.OK, resposta.getStatusCode());
+
+    }
+
+    @Disabled
+    @Test
+    @DisplayName("Alterar Usuário!")
+    @Order(3)
+    public void deveRealizarPutUsuario() {
+
+        HttpEntity<Usuario> request = new HttpEntity<Usuario>(usuarioUpdate);
+        ResponseEntity<Usuario> resposta = testRestTemplate.withBasicAuth("admin@mail.com", "123654987").exchange("/usuarios/alterar", HttpMethod.PUT, request, Usuario.class);
+        assertEquals(HttpStatus.OK, resposta.getStatusCode());
+
+    }
 
 }

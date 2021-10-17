@@ -23,6 +23,8 @@ public class Tema {
 	@NotNull
     private String descricao;
 	
+	private long qtd;
+	
 	@OneToMany(mappedBy = "tema", cascade = CascadeType.ALL)
 	@JsonIgnoreProperties
     private List<Postagem> postagem;
@@ -39,7 +41,14 @@ public class Tema {
   	public void setDescricao(String descricao) {
   		this.descricao = descricao;
   	}
-  	public List<Postagem> getPostagem() {
+  	
+  	public long getQtd() {
+		return qtd;
+	}
+	public void setQtd(long qtd) {
+		this.qtd = qtd;
+	}
+	public List<Postagem> getPostagem() {
   		return postagem;
   	}
   	public void setPostagem(List<Postagem> postagem) {

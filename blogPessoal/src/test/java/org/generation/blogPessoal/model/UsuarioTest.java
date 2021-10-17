@@ -20,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 
+import org.generation.blogPessoal.model.Usuario;
+
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class UsuarioTest {
 	public Usuario usuario;
@@ -31,7 +33,7 @@ public class UsuarioTest {
 	@BeforeEach
 	public void start() {
 		LocalDate data = LocalDate.parse("2000-07-22", DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-		usuario = new Usuario(0L, "João da Silva", "joao@email.com.br", "13465278", data);
+		usuario = new Usuario(0L, "Zezin", "zezin@email.com.br", "123654987", data);
 	}
 
 	@Test
